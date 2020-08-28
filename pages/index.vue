@@ -1,73 +1,123 @@
 <template>
-  <div class="container">
+  <section>
     <div>
-      <Logo />
-      <h1 class="title">
-        challenge-todo-list
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+      <h1>ToDoリスト</h1>
     </div>
-  </div>
+    <div>
+      <form id="radio-form">
+        <label>
+          <input
+            type="radio"
+            name="radio1"
+            @click="filterReset"
+            checked
+          />すべて
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="radio1"
+            @click="filterTodo('作業中')"
+          />作業中
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="radio1"
+            @click="filterTodo('完了')"
+          />完了
+        </label>
+      </form>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>コメント</th>
+            <th>状態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="todo in display_todos" :key="todo.id">
+            <td>{{ todo.id }}</td>
+            <td>{{ todo.comment }}</td>
+            <td>
+              <button @click="changeStatus(todo)">{{ todo.status }}</button>
+            </td>
+            <td>
+              <button @click="deleteTodo(todo)">削除</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2>新規タスクの追加</h2>
+    </div>
+    <div>
+      <label for="inputTodoBox">ToDoリスト</label>
+      <input id="inputTodoBox" type="text" name=":addTodo" v-model="comment" />
+      <button id="addButton" @click="addTodo">追加</button>
+    </div>
+  </section>
 </template>
 
 <script>
-export default {}
+import { mapState } from "vuex";
+
+export default {
+  data() {
+    return {
+      comment: "",
+      filter_Todo_Status: "",
+      filter_RadioButton: false,
+    };
+  },
+  computed: {
+    ...mapState(["todos"]),
+    display_todos() {
+      if (this.filter_RadioButton) {
+        let array = [];
+        let data = this.todos;
+        data.forEach((element) => {
+          if (element.status == this.filter_Todo_Status) {
+            array.push(element);
+          }
+        });
+        return array;
+      } else {
+        return this.todos;
+      }
+    },
+  },
+  methods: {
+    addTodo() {
+      if (this.comment != "") {
+        this.$store.commit("addTodo", {
+          id: this.todos.length,
+          comment: this.comment,
+        });
+        this.comment = "";
+        inputTodoBox.focus();
+      } else {
+        alert("タスクを入力してください");
+        return;
+      }
+    },
+    deleteTodo(todo) {
+      this.$store.commit("deleteTodo", todo);
+    },
+    changeStatus(todo) {
+      this.$store.commit("changeStatus", todo);
+    },
+    filterTodo(filterTodoStatus) {
+      this.filter_Todo_Status = filterTodoStatus;
+      this.filter_RadioButton = true;
+    },
+    filterReset() {
+      this.filter_RadioButton = false;
+    },
+  },
+};
 </script>
-
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
