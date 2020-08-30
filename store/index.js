@@ -6,30 +6,30 @@ const createStore = () => {
       todos: []
     }),
     mutations: {
-      addTodo(state, obj) {
+      addTodo(state, todo) {
         state.todos.push({
           id: state.todos.length,
-          comment: obj.comment,
+          comment: todo.comment,
           status: '作業中'
         })
       },
-      deleteTodo(state, obj) {
-        for (let i = 0; i < state.todos.length; i++) {
-          const ob = state.todos[i];
-          if(ob.comment == obj.comment && ob.id == obj.id) {
-            state.todos.splice(i, 1);
-            state.todos.forEach((obj, index) => {
-              state.todos[index].id = index;
+      deleteTodo(state, todo) {
+        state.todos.forEach((value, index) => {
+          const ob = state.todos[index];
+          if(ob.comment === todo.comment && ob.id === todo.id) {
+            state.todos.splice(index, 1);
+            state.todos.forEach((value, i) => {
+              state.todos[i].id = i;
             });
             return;
           }
-        }
+        });
       },
-      changeStatus(state, obj) {
-        if (obj.status === '作業中') {
-          obj.status = '完了';
+      changeStatus(state, todo) {
+        if (todo.status === '作業中') {
+          todo.status = '完了';
         } else {
-          obj.status = '作業中';
+          todo.status = '作業中';
         }
         return;
       }

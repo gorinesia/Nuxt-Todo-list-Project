@@ -9,7 +9,7 @@
           <input
             type="radio"
             name="radio1"
-            @click="filterReset"
+            @click="filterTodoReset"
             checked
           />すべて
         </label>
@@ -69,23 +69,23 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      comment: "",
-      filter_Todo_Status: "",
-      filter_RadioButton: false,
+      comment: '',
+      todoStatus: '',
+      radioButtonStatus: false,
     };
   },
   computed: {
     ...mapState(["todos"]),
     display_todos() {
-      if (this.filter_RadioButton) {
-        let array = [];
-        let data = this.todos;
-        data.forEach((element) => {
-          if (element.status == this.filter_Todo_Status) {
-            array.push(element);
+      if (this.radioButtonStatus) {
+        const newTodos = [];
+        const newTodo = this.todos;
+        newTodo.forEach((todo) => {
+          if (todo.status === this.todoStatus) {
+            newTodos.push(todo);
           }
         });
-        return array;
+        return newTodos;
       } else {
         return this.todos;
       }
@@ -93,15 +93,14 @@ export default {
   },
   methods: {
     addTodo() {
-      if (this.comment != "") {
+      if (this.comment !== '') {
         this.$store.commit("addTodo", {
           id: this.todos.length,
           comment: this.comment,
         });
-        this.comment = "";
+        this.comment = '';
         inputTodoBox.focus();
       } else {
-        alert("タスクを入力してください");
         return;
       }
     },
@@ -111,12 +110,12 @@ export default {
     changeStatus(todo) {
       this.$store.commit("changeStatus", todo);
     },
-    filterTodo(filterTodoStatus) {
-      this.filter_Todo_Status = filterTodoStatus;
-      this.filter_RadioButton = true;
+    filterTodo(status) {
+      this.todoStatus = status;
+      this.radioButtonStatus = true;
     },
-    filterReset() {
-      this.filter_RadioButton = false;
+    filterTodoReset() {
+      this.radioButtonStatus = false;
     },
   },
 };
