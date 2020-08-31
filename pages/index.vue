@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="todo in display_todos" :key="todo.id">
+          <tr v-for="todo in displayTodos" :key="todo.id">
             <td>{{ todo.id }}</td>
             <td>{{ todo.comment }}</td>
             <td>
@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     ...mapState(["todos"]),
-    display_todos() {
+    displayTodos() {
       if (this.radioButtonStatus) {
         const newTodos = [];
         const newTodo = this.todos;
